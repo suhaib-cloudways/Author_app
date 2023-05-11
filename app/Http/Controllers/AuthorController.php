@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Author;
+use App\Helpers\AuthorValidationHelper;
+use App\Http\Requests\UserStoreRequest;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 
 class AuthorController extends Controller
 {
@@ -22,9 +25,24 @@ class AuthorController extends Controller
 
     public function create(Request $request)
     {
-        $author = Author::create($request->all());
 
-        return response()->json($author, 201);
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email|unique:authors',
+            'location' => 'required|alpha'
+        ]);
+
+        // $author = Author::create($request->all());
+
+        $author = Author::create([
+            // 'user_id' => $request->user()->id,
+            'name' => $request->name,
+            'email' => $request->email,
+            'github' => $request->github,
+            'twitter' => $request->twitter,
+            'location' => $request->location,
+        ]);
+            return new UserResource($author);
     }
 
 

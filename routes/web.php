@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Resources\UserResource;
+
 /** @var \Laravel\Lumen\Routing\Router $router */
 
 /*
@@ -17,8 +19,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 $router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('authors',  ['uses' => 'AuthorController@showAllAuthors']);
-  
+     $router->get('authors',  ['uses' => 'AuthorController@showAllAuthors']);
+   
     $router->get('authors/{id}', ['uses' => 'AuthorController@showOneAuthor']);
   
     $router->post('authors', ['uses' => 'AuthorController@create']);
