@@ -48,7 +48,7 @@ class AuthorController extends Controller
     {
         $validated = $request->validated();
         
-        $author = $this->authorRepository->updateAnAuthor($id, $request);
+        $author = $this->authorRepository->update($id, $request);
 
         return response($author, 200);
     }
