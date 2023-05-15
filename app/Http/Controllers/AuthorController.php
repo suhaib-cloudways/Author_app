@@ -3,61 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\Author;
-use App\Helpers\AuthorValidationHelper;
 use App\Http\Requests\UserStoreRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Interfaces\AuthorRepositoryInterface;
 use App\Http\Resources\UserResource;
 
 class AuthorController extends Controller
 {
+
+    private AuthorRepositoryInterface $authorRepository;
+
+    public function __construct(AuthorRepositoryInterface $authorRepository)
+    {
+        $this->authorRepository = $authorRepository;
+    }
     
     public function showAllAuthors()
     {
-        return response()->json(Author::all());
+        $allAuthors = $this->authorRepository->showAllAuthors();
+        return response()->json($allAuthors);
     }
 
 
     public function showOneAuthor($id)
     {
-        return response()->json(Author::find($id));
+        $oneAuthor =  $this->authorRepository->showOneAuthor($id);
+        return response()->json($oneAuthor);
     }
 
 
     public function create(Request $request)
     {
+        // JsonResource::withoutWrapping();
+        $validated = $request->validated();
+        
+        $author = $this->authorRepository->create($request);
 
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:authors',
-            'location' => 'required|alpha'
-        ]);
-
-        // $author = Author::create($request->all());
-
-        $author = Author::create([
-            // 'user_id' => $request->user()->id,
-            'name' => $request->name,
-            'email' => $request->email,
-            'github' => $request->github,
-            'twitter' => $request->twitter,
-            'location' => $request->location,
-        ]);
-            return new UserResource($author);
+        return response()->json($author, 201);
     }
 
 
     public function update($id, Request $request)
     {
-        $author = Author::findOrFail($id);
-        $author->update($request->all());
+        $validated = $request->validated();
+        
+        $author = $this->authorRepository->updateAnAuthor($id, $request);
 
-        return response()->json($author, 200);
+        return response($author, 200);
     }
 
 
     public function delete($id)
     {
-        Author::findOrFail($id)->delete();
-        return response('Deleted Successfully', 200);
+        $deleteAuthors = $this->authorRepository->delete($id);
+        return response()->json($deleteAuthors);
     }
 }

@@ -16,6 +16,7 @@ class Author extends Model
         'name', 'email', 'github', 'twitter', 'location'
     ];
 
+
  
     protected $hidden = [];
 }
